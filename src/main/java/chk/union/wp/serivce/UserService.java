@@ -11,6 +11,7 @@ import chk.union.wp.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,5 +41,11 @@ public class UserService {
         Session session = sessionRepository.findFirstBySecurityToken(token).orElseThrow(NotFoundException::new);
 
         return userMapper.toDto(session.getUser());
+    }
+
+    public List<UserDto> search(final String name) {
+        List<User> users = userRepository.findAllByNameLikeOrderByName(name);
+
+        return userMapper.toDtos(users);
     }
 }

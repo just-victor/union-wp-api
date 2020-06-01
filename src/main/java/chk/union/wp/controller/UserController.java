@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static chk.union.wp.security.SecurityFilter.HEADER_X_SECURITY_TOKEN;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -31,5 +34,10 @@ public class UserController {
     @GetMapping("/getUserData")
     public ResponseWrapper<UserDto> getUserData(@RequestHeader(HEADER_X_SECURITY_TOKEN) String token) {
         return ResponseWrapper.of(userService.getUserData(token));
+    }
+
+    @GetMapping("/search")
+    public ResponseWrapper<List<UserDto>> search(@RequestParam("name") String name) {
+        return ResponseWrapper.of(userService.search(name));
     }
 }
