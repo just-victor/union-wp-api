@@ -44,7 +44,7 @@ public class UserService {
     }
 
     public List<UserDto> search(final String name) {
-        List<User> users = userRepository.findAllByNameLikeOrderByName(name);
+        List<User> users = userRepository.findAllByNameStartingWithIgnoreCase(name);
 
         return userMapper.toDtos(users);
     }

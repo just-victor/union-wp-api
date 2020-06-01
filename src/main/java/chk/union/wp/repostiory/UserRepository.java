@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByTelephone(String telephone);
-    List<User> findAllByNameLikeOrderByName(String name);
+    List<User> findAllByNameStartingWithIgnoreCase(String name);
 }
