@@ -3,7 +3,7 @@ package chk.union.wp.security;
 import chk.union.wp.common.exception.ApiException;
 import chk.union.wp.common.exception.UnauthorizedException;
 import chk.union.wp.common.response.ErrorResponse;
-import chk.union.wp.repostiory.SessionRepository;
+import chk.union.wp.serivce.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private static final String REGISTER = "/api/users";
     private static final String EVENTS = "/api/events";
 
-    private final SessionRepository sessionRepository;
+    private final AuthService authService;
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
         try {
@@ -58,7 +58,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
         return requestURI.contains(AUTH)
-                || requestURI.contains(REGISTER)
+                || requestURI.equals(REGISTER)
                 || (HttpMethod.GET.matches(method) && requestURI.contains(EVENTS));
     }
 
@@ -68,8 +68,8 @@ public class SecurityFilter extends OncePerRequestFilter {
             throw new UnauthorizedException("User is not authorized");
         }
 
-        sessionRepository.findFirstBySecurityToken(securityToken)
-                .orElseThrow(() -> new UnauthorizedException("User is not authorized wrong security token"));
+        authService.getAuthorizedUser(securityToken)
+                .orElseThrow(() -> new UnauthorizedException("User is not authorized"));
 
     }
 }
