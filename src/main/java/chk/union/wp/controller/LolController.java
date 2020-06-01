@@ -1,8 +1,7 @@
 package chk.union.wp.controller;
 
 import chk.union.wp.dto.UserDto;
-import chk.union.wp.serivce.AuthService;
-import chk.union.wp.serivce.UserService;
+import chk.union.wp.serivce.LolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,17 +19,16 @@ import java.util.stream.Collectors;
 @RequestMapping("api/lol")
 @RequiredArgsConstructor
 public class LolController {
-    private final AuthService authService;
-    private final UserService userService;
+    private final LolService lolService;
 
     @GetMapping("/registeredUsers")
     public Map<String, UserDto> getRegisteredUses() {
-        return authService.getAll();
+        return lolService.getRegisteredUsers();
     }
 
     @GetMapping("/allUsers")
     public List<UserDto> getAllUsers() {
-        return userService.getAll();
+        return lolService.getAllUsers();
     }
 
     @GetMapping("")

@@ -11,5 +11,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-
-
+logging:
+  file:
+    path: ./logs
