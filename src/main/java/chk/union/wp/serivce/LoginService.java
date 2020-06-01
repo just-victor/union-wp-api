@@ -22,10 +22,11 @@ public class LoginService {
     private final AuthService authService;
 
     public String login(final LoginDto loginDto) {
-        LOG.info("User \"{}\" try to login", loginDto.getTelephone());
+        String telephone = loginDto.getTelephone();
+        LOG.info("User \"{}\" try to login", telephone);
 
-        User registeredUser = userService.findByTelephone(loginDto.getTelephone())
-                .orElseThrow(NotFoundException::new);
+        User registeredUser = userService.findByTelephone(telephone)
+                .orElseThrow(() -> new NotFoundException("Not found user with telephone: " + telephone));
 
         String password = new String(Base64.getDecoder().decode(loginDto.getPassword()));
 
@@ -38,7 +39,7 @@ public class LoginService {
 
         sessionRepository.save(session);
 
-        LOG.info("User \"{}\" successfully logged in", loginDto.getTelephone());
+        LOG.info("User \"{}\" successfully logged in security token: {}", telephone, session.getSecurityToken());
 
         return session.getSecurityToken();
     }

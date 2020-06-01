@@ -65,11 +65,10 @@ public class SecurityFilter extends OncePerRequestFilter {
     private void validateUserAuthentication(final HttpServletRequest request) {
         String securityToken = request.getHeader(HEADER_X_SECURITY_TOKEN);
         if (isEmpty(securityToken)) {
-            throw new UnauthorizedException("User is not authorized");
+            throw new UnauthorizedException();
         }
 
-        authService.getAuthorizedUser(securityToken)
-                .orElseThrow(() -> new UnauthorizedException("User is not authorized"));
+        authService.getAuthorizedUser(securityToken);
 
     }
 }

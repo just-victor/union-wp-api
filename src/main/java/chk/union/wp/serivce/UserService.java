@@ -23,6 +23,7 @@ public class UserService {
     private final AuthService authService;
 
     public User getById(final Long id) {
+        LOG.info("Find user by id: {}", id);
         return userRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
@@ -44,11 +45,11 @@ public class UserService {
     }
 
     public UserDto getUserData() {
-        return authService.getCurrentUser();
+        return authService.getCurrentUserDto();
     }
 
     public List<UserDto> search(final String name) {
-        if (!authService.getCurrentUser().getIsAdmin()) {
+        if (!authService.getCurrentUserDto().getIsAdmin()) {
             throw new ForbiddenException();
         }
 

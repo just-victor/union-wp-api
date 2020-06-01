@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static chk.union.wp.security.SecurityFilter.HEADER_X_SECURITY_TOKEN;
 import static java.util.Objects.isNull;
@@ -27,24 +26,22 @@ public class AuthService {
 
     private Map<String, UserDto> authorizedUsers = new HashMap<>();
 
-    public Optional<UserDto> getAuthorizedUser (final String securityToken) {
-        LOG.info("Retrieving user by security token {}", securityToken);
+    public UserDto getAuthorizedUser (final String securityToken) {
         UserDto userDto = authorizedUsers.get(securityToken);
         if (isNull(userDto)) {
             Session session = sessionRepository.findFirstBySecurityToken(securityToken)
-                    .orElseThrow(UnauthorizedException::new);
+                    .orElseThrow(() -> new UnauthorizedException("User is not authorized: " + securityToken));
             userDto = userMapper.toDto(session.getUser());
             authorizedUsers.put(securityToken, userDto);
         }
 
-        return Optional.of(userDto);
+        return userDto;
     }
 
-    public UserDto getCurrentUser() {
+    public UserDto getCurrentUserDto() {
         String securityToken = request.getHeader(HEADER_X_SECURITY_TOKEN);
 
-        return getAuthorizedUser(securityToken)
-                .orElseThrow(UnauthorizedException::new);
+        return getAuthorizedUser(securityToken);
     }
 
     public Map<String, UserDto> getAll() {
@@ -53,8 +50,7 @@ public class AuthService {
 
     public void logoutCurrentUser() {
         String securityToken = request.getHeader(HEADER_X_SECURITY_TOKEN);
-        LOG.info("Log out current user token: {}, name: {}", securityToken, getAuthorizedUser(securityToken)
-                .orElse(new UserDto()).getName());
+        LOG.info("Log out current user token: {}, name: {}", securityToken, getAuthorizedUser(securityToken).getName());
         authorizedUsers.remove(securityToken);
         sessionRepository.deleteBySecurityToken(securityToken);
     }
