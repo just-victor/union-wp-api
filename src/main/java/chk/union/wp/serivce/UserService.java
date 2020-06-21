@@ -1,5 +1,6 @@
 package chk.union.wp.serivce;
 
+import chk.union.wp.common.exception.ConflictException;
 import chk.union.wp.common.exception.ForbiddenException;
 import chk.union.wp.common.exception.NotFoundException;
 import chk.union.wp.dto.UserDto;
@@ -29,13 +30,18 @@ public class UserService {
 
     public UserDto register(final UserDto userDto, final String authoriztion) {
         LOG.info("Try to register new user, name: {}, telephone: {}", userDto.getName(), userDto.getTelephone());
+        Optional<User> userOpt = userRepository.findByTelephone(userDto.getTelephone());
+        if (userOpt.isPresent()) {
+            throw new ConflictException("Номер телефона уже зарегистрирован");
+        }
+
         User user = userMapper.toEntity(userDto, new User());
 
         PasswordUtils.generateUserPassword(user, authoriztion);
 
         User registeredUser = userRepository.save(user);
 
-        LOG.info("new user registered, id: {}, name: {}, telephone: {}", userDto.getId(), userDto.getName(), userDto.getTelephone());
+        LOG.info("new user registered, id: {}, name: {}, telephone: {}", registeredUser.getId(), userDto.getName(), userDto.getTelephone());
 
         return userMapper.toDto(registeredUser);
     }

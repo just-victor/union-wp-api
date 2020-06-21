@@ -22,13 +22,13 @@ public class PasswordUtils {
 
         String encodedPassword = base64Encode(salt + passwordToVerify);
 
-        if (Objects.equals(user.getPassword(), encodedPassword)) {
-            throw new UnauthorizedException("Wrong credentials");
+        if (!Objects.equals(user.getPassword(), encodedPassword)) {
+            throw new UnauthorizedException("Пароль неверный");
         }
     }
 
     public static void generateUserPassword(final User user, final String authorization) {
-        String password = base64Encode(authorization);
+        String password = base64Decode(authorization);
 
         String salt = UUID.randomUUID().toString();
 

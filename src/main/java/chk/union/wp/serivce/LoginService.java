@@ -26,7 +26,7 @@ public class LoginService {
         LOG.info("User \"{}\" try to login", telephone);
 
         User registeredUser = userService.findByTelephone(telephone)
-                .orElseThrow(() -> new NotFoundException("Not found user with telephone: " + telephone));
+                .orElseThrow(() -> new NotFoundException("Номер телефона не зарегистрирован"));
 
         String password = new String(Base64.getDecoder().decode(loginDto.getPassword()));
 
